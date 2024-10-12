@@ -47,6 +47,9 @@ const addUser = (user) => {
   return user;
 };
 
+const removeUserById = (id) =>
+  users["users_list"] = users["users_list"].filter((user) => user["id"] !== id);
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -55,8 +58,11 @@ app.get("/", (req, res) => {
 
 app.get("/users", (req, res) => {
   const name = req.query.name;
+  const job = req.query.job;
   if (name != undefined) {
     let result = findUserByName(name);
+    if (job != undefined)
+      result = result.filter((user) => user["job"] === job);
     result = { users_list: result };
     res.send(result);
   } else {
@@ -77,6 +83,12 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
   addUser(userToAdd);
+  res.send();
+});
+
+app.delete("/users/:id", (req, res) => {
+  const id = req.params["id"];
+  removeUserById(id);
   res.send();
 });
 
