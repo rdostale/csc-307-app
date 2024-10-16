@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 
 const app = express();
@@ -50,6 +51,7 @@ const addUser = (user) => {
 const removeUserById = (id) =>
   users["users_list"] = users["users_list"].filter((user) => user["id"] !== id);
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
