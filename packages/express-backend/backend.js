@@ -48,8 +48,15 @@ const addUser = (user) => {
   return user;
 };
 
-const removeUserById = (id) =>
+const removeUserById = (id) => {
   users["users_list"] = users["users_list"].filter((user) => user["id"] !== id);
+}
+
+const generateId = () => {
+  const id = Math.floor(Math.random() * 900000 + 100000).toString();
+  if (findUserById(id)) generateId();
+  else return id
+}
 
 app.use(cors());
 app.use(express.json());
@@ -84,14 +91,19 @@ app.get("/users/:id", (req, res) => {
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
-  addUser(userToAdd);
-  res.send();
+  userToAdd.id = generateId();
+  let result = addUser(userToAdd);
+  if (result === undefined) {
+    res.status(400).send("Bad request.")
+  } else {
+    res.status(201).send(result);
+  }
 });
 
 app.delete("/users/:id", (req, res) => {
   const id = req.params["id"];
   removeUserById(id);
-  res.send();
+  res.status(204).send();
 });
 
 app.listen(port, () => {

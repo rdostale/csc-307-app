@@ -6,10 +6,23 @@ function MyApp() {
   const [characters, setCharacters] = useState([]);
 
   function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {
-      return i != index;
+    const id = characters[index].id;
+
+    const promise = fetch(`Http://localhost:8000/users/${id}`, {
+      method: "DELETE",
     });
-    setCharacters(updated);
+
+    return promise
+      .then((response) => {
+        if (response.status === 204) {
+          setCharacters(characters.filter((character, i) => i != index));
+        } else {
+          throw new Error ("Delete failed.");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function postUser(person) {
@@ -20,13 +33,23 @@ function MyApp() {
       },
       body: JSON.stringify(person)
     });
-  
-    return promise;
+    
+    return promise
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json();
+        } else {
+          throw new Error("Creation failed.");
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      });
   }
 
   function updateList(person) {
     postUser(person)
-      .then(() => setCharacters([...characters, person]))
+      .then((newPerson) => setCharacters([...characters, newPerson]))
       .catch((error) => {
         console.log(error);
       });
