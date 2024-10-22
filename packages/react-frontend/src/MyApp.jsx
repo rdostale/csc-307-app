@@ -6,9 +6,9 @@ function MyApp() {
   const [characters, setCharacters] = useState([]);
 
   function removeOneCharacter(index) {
-    const id = characters[index].id;
+    const id = characters[index]["_id"];
 
-    const promise = fetch(`Http://localhost:8000/users/${id}`, {
+    const promise = fetch(`http://localhost:8000/users/${id}`, {
       method: "DELETE",
     });
 
@@ -17,7 +17,7 @@ function MyApp() {
         if (response.status === 204) {
           setCharacters(characters.filter((character, i) => i != index));
         } else {
-          throw new Error ("Delete failed.");
+          throw new Error ("Delete failed");
         }
       })
       .catch((error) => {
@@ -26,7 +26,7 @@ function MyApp() {
   }
 
   function postUser(person) {
-    const promise = fetch("Http://localhost:8000/users", {
+    const promise = fetch("http://localhost:8000/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -39,7 +39,7 @@ function MyApp() {
         if (response.status === 201) {
           return response.json();
         } else {
-          throw new Error("Creation failed.");
+          throw new Error("Creation failed");
         }
       })
       .catch((error) => {
@@ -63,7 +63,7 @@ function MyApp() {
   useEffect(() => {
     fetchUsers()
       .then((res) => res.json())
-      .then((json) => setCharacters(json["users_list"]))
+      .then((json) => setCharacters(json))
       .catch((error) => {
         console.log(error);
       });
